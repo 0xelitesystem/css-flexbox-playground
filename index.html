@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Flexbox Playground</title>
+<meta name="description" content="Interactive CSS flexbox visualizer. Tweak container and per-item properties, see a live preview, and copy the generated CSS. Learn flexbox by experimenting. Runs entirely in your browser.">
+<link rel="canonical" href="https://0xelitesystem.github.io/css-flexbox-playground/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CSS Flexbox Playground">
+<meta property="og:description" content="Interactive flexbox visualizer with live preview and copyable CSS. Adjust container and per-item properties. All in your browser.">
+<meta property="og:url" content="https://0xelitesystem.github.io/css-flexbox-playground/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CSS Flexbox Playground",
+  "description": "Interactive CSS flexbox visualizer. Tweak container and per-item properties, see a live preview, and copy the generated CSS. Runs entirely in your browser.",
+  "url": "https://0xelitesystem.github.io/css-flexbox-playground/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "0xelitesystem" }
+}
+</script>
+<style>
+:root {
+  --bg: #fafaf6;
+  --surface: #ffffff;
+  --ink: #0a1d1e;
+  --ink-soft: #2c4a4c;
+  --rule: #c8d4d3;
+  --teal: #0f5c60;
+  --teal-deep: #0a4548;
+  --gold: #b07d2a;
+  --gold-deep: #8a611f;
+  --ok: #1a5c2e;
+  --warn: #8a5a00;
+  --err: #8b1a1a;
+  --code-bg: #f0ebe1;
+  --item: #2660a8;
+  --item-2: #b03d8f;
+}
+[data-theme="dark"] {
+  --bg: #0c1c1d;
+  --surface: #14292a;
+  --ink: #e8ebe6;
+  --ink-soft: #b0c0bd;
+  --rule: #2a4042;
+  --teal: #4ab4ba;
+  --teal-deep: #6dc8ce;
+  --gold: #d4a155;
+  --gold-deep: #e6b876;
+  --ok: #6dd380;
+  --warn: #d4a155;
+  --err: #e88080;
+  --code-bg: #0a1718;
+  --item: #6da8e0;
+  --item-2: #d97ab8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  line-height: 1.55;
+}
+.wrap { max-width: 1180px; margin: 0 auto; }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid var(--teal);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--teal);
+}
+.tag {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.75rem;
+  color: var(--gold-deep);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+[data-theme="dark"] .tag { color: var(--gold); }
+.theme-btn {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.theme-btn:hover { border-color: var(--teal); color: var(--teal); }
+.lede {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  margin-bottom: 1.75rem;
+  max-width: 65ch;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 1.25rem;
+  border-radius: 3px;
+}
+.panel h2 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+  color: var(--teal);
+}
+.control { margin-bottom: 1rem; }
+.control label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  margin-bottom: 0.35rem;
+}
+.control .desc {
+  font-family: ui-serif, Georgia, serif;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  margin-top: 0.3rem;
+}
+select, input[type="number"], input[type="text"] {
+  width: 100%;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 0.45rem 0.55rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.82rem;
+  border-radius: 2px;
+}
+select:focus, input:focus { outline: 2px solid var(--teal); outline-offset: 1px; }
+button {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 2px;
+}
+button:hover { border-color: var(--teal); }
+button.primary {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--surface);
+  font-weight: 600;
+}
+[data-theme="dark"] button.primary { color: var(--bg) !important; }
+button.primary:hover { background: var(--teal-deep); border-color: var(--teal-deep); }
+button.small { font-size: 0.75rem; padding: 0.35rem 0.7rem; }
+.btn-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.preview-wrap { margin-bottom: 1.25rem; }
+.preview-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+}
+#preview {
+  border: 2px dashed var(--rule);
+  border-radius: 3px;
+  min-height: 280px;
+  background: var(--code-bg);
+  padding: 0.5rem;
+  display: flex;
+}
+.flex-item {
+  background: var(--item);
+  color: #fff;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8rem;
+  padding: 1rem 1.1rem;
+  border-radius: 3px;
+  min-width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  user-select: none;
+}
+.flex-item.selected { border-color: var(--gold); outline: 2px solid var(--gold); }
+.flex-item:nth-child(even) { background: var(--item-2); }
+.item-editor {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+.item-editor .control { margin-bottom: 0.75rem; }
+.section {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 1.25rem;
+  border-radius: 3px;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  gap: 0.85rem;
+}
+.section-title { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.02em; }
+.copy-btn { font-size: 0.75rem; padding: 0.4rem 0.85rem; }
+pre {
+  background: var(--code-bg);
+  padding: 0.85rem;
+  border-radius: 2px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  color: var(--ink);
+}
+footer {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+footer a { color: var(--teal); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+@media (max-width: 640px) {
+  body { padding: 1rem 0.75rem; }
+  h1 { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>CSS Flexbox Playground</h1>
+    <div class="tag">Learn flexbox by experimenting</div>
+  </div>
+  <button class="theme-btn" id="theme-toggle" type="button">Dark</button>
+</header>
+
+<p class="lede">Adjust the container and per-item flex properties, watch the live preview update, and copy the generated CSS. Click any item in the preview to edit its individual properties (flex-grow, flex-shrink, flex-basis, align-self, order). Everything runs in your browser.</p>
+
+<div class="grid">
+  <div class="panel">
+    <h2>Container</h2>
+
+    <div class="control">
+      <label for="c-direction">flex-direction</label>
+      <select id="c-direction">
+        <option>row</option>
+        <option>row-reverse</option>
+        <option>column</option>
+        <option>column-reverse</option>
+      </select>
+      <div class="desc">Main axis direction the items flow along.</div>
+    </div>
+
+    <div class="control">
+      <label for="c-wrap">flex-wrap</label>
+      <select id="c-wrap">
+        <option>nowrap</option>
+        <option>wrap</option>
+        <option>wrap-reverse</option>
+      </select>
+      <div class="desc">Whether items wrap onto multiple lines.</div>
+    </div>
+
+    <div class="control">
+      <label for="c-justify">justify-content</label>
+      <select id="c-justify">
+        <option>flex-start</option>
+        <option>flex-end</option>
+        <option>center</option>
+        <option>space-between</option>
+        <option>space-around</option>
+        <option>space-evenly</option>
+      </select>
+      <div class="desc">Alignment along the main axis.</div>
+    </div>
+
+    <div class="control">
+      <label for="c-align-items">align-items</label>
+      <select id="c-align-items">
+        <option>stretch</option>
+        <option>flex-start</option>
+        <option>flex-end</option>
+        <option>center</option>
+        <option>baseline</option>
+      </select>
+      <div class="desc">Alignment along the cross axis (per line).</div>
+    </div>
+
+    <div class="control">
+      <label for="c-align-content">align-content</label>
+      <select id="c-align-content">
+        <option>stretch</option>
+        <option>flex-start</option>
+        <option>flex-end</option>
+        <option>center</option>
+        <option>space-between</option>
+        <option>space-around</option>
+        <option>space-evenly</option>
+      </select>
+      <div class="desc">Spacing between lines when items wrap (needs flex-wrap: wrap).</div>
+    </div>
+
+    <div class="control">
+      <label for="c-gap">gap (px)</label>
+      <input type="number" id="c-gap" value="8" min="0" max="80" step="1">
+      <div class="desc">Space between items.</div>
+    </div>
+
+    <div class="item-editor">
+      <h2>Items</h2>
+      <div class="btn-row">
+        <button class="small" id="add-item" type="button">Add item</button>
+        <button class="small" id="remove-item" type="button">Remove last</button>
+      </div>
+
+      <div id="per-item" style="display:none;">
+        <div class="control" style="margin-top:1rem;">
+          <label id="sel-label">Selected item</label>
+          <div class="desc" id="sel-hint">Click an item in the preview to select it.</div>
+        </div>
+        <div class="control">
+          <label for="i-grow">flex-grow</label>
+          <input type="number" id="i-grow" value="0" min="0" max="10" step="1">
+          <div class="desc">How much the item grows to fill free space.</div>
+        </div>
+        <div class="control">
+          <label for="i-shrink">flex-shrink</label>
+          <input type="number" id="i-shrink" value="1" min="0" max="10" step="1">
+          <div class="desc">How much the item shrinks when space is tight.</div>
+        </div>
+        <div class="control">
+          <label for="i-basis">flex-basis</label>
+          <input type="text" id="i-basis" value="auto" spellcheck="false">
+          <div class="desc">Starting size before grow/shrink (for example auto, 100px, 20%).</div>
+        </div>
+        <div class="control">
+          <label for="i-alignself">align-self</label>
+          <select id="i-alignself">
+            <option>auto</option>
+            <option>flex-start</option>
+            <option>flex-end</option>
+            <option>center</option>
+            <option>baseline</option>
+            <option>stretch</option>
+          </select>
+          <div class="desc">Overrides align-items for this one item.</div>
+        </div>
+        <div class="control">
+          <label for="i-order">order</label>
+          <input type="number" id="i-order" value="0" min="-10" max="10" step="1">
+          <div class="desc">Reorders items. Lower values come first.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="preview-wrap">
+      <div class="preview-label">Live preview (click an item to edit it)</div>
+      <div id="preview"></div>
+    </div>
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Generated CSS</div>
+        <button class="copy-btn" id="copy-btn" type="button">Copy</button>
+      </div>
+      <pre id="css-out"></pre>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>CSS Flexbox Playground. Open source, MIT licensed. No external dependencies, works offline.</div>
+  <div>Built by <a href="https://elitesystem.ai" target="_blank" rel="noopener">elitesystem.ai</a></div>
+</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const themeBtn = $("theme-toggle");
+function setTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  themeBtn.textContent = t === "dark" ? "Light" : "Dark";
+}
+themeBtn.addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme") || "light";
+  setTheme(cur === "dark" ? "light" : "dark");
+});
+
+// Item model: each item has its own props.
+let items = [
+  defItem(), defItem(), defItem()
+];
+let selected = -1;
+
+function defItem() {
+  return { grow: 0, shrink: 1, basis: "auto", alignSelf: "auto", order: 0 };
+}
+
+function container() {
+  return {
+    direction: $("c-direction").value,
+    wrap: $("c-wrap").value,
+    justify: $("c-justify").value,
+    alignItems: $("c-align-items").value,
+    alignContent: $("c-align-content").value,
+    gap: parseInt($("c-gap").value, 10) || 0,
+  };
+}
+
+function render() {
+  const c = container();
+  const prev = $("preview");
+  prev.style.flexDirection = c.direction;
+  prev.style.flexWrap = c.wrap;
+  prev.style.justifyContent = c.justify;
+  prev.style.alignItems = c.alignItems;
+  prev.style.alignContent = c.alignContent;
+  prev.style.gap = c.gap + "px";
+
+  prev.innerHTML = "";
+  items.forEach((it, i) => {
+    const el = document.createElement("div");
+    el.className = "flex-item" + (i === selected ? " selected" : "");
+    el.textContent = (i + 1);
+    el.style.flexGrow = it.grow;
+    el.style.flexShrink = it.shrink;
+    el.style.flexBasis = it.basis;
+    el.style.alignSelf = it.alignSelf;
+    el.style.order = it.order;
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("aria-label", "Flex item " + (i + 1) + ", click to edit");
+    el.addEventListener("click", () => selectItem(i));
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectItem(i); } });
+    prev.appendChild(el);
+  });
+
+  renderCSS(c);
+}
+
+function selectItem(i) {
+  selected = i;
+  const it = items[i];
+  $("per-item").style.display = "block";
+  $("sel-label").textContent = "Item " + (i + 1);
+  $("sel-hint").textContent = "Editing item " + (i + 1) + ".";
+  $("i-grow").value = it.grow;
+  $("i-shrink").value = it.shrink;
+  $("i-basis").value = it.basis;
+  $("i-alignself").value = it.alignSelf;
+  $("i-order").value = it.order;
+  render();
+}
+
+function renderCSS(c) {
+  let css = ".container {\n";
+  css += "  display: flex;\n";
+  css += `  flex-direction: ${c.direction};\n`;
+  css += `  flex-wrap: ${c.wrap};\n`;
+  css += `  justify-content: ${c.justify};\n`;
+  css += `  align-items: ${c.alignItems};\n`;
+  css += `  align-content: ${c.alignContent};\n`;
+  css += `  gap: ${c.gap}px;\n`;
+  css += "}\n";
+
+  // Only emit per-item rules that differ from the defaults.
+  items.forEach((it, i) => {
+    const rules = [];
+    if (it.grow !== 0) rules.push(`  flex-grow: ${it.grow};`);
+    if (it.shrink !== 1) rules.push(`  flex-shrink: ${it.shrink};`);
+    if (it.basis !== "auto" && it.basis !== "") rules.push(`  flex-basis: ${it.basis};`);
+    if (it.alignSelf !== "auto") rules.push(`  align-self: ${it.alignSelf};`);
+    if (it.order !== 0) rules.push(`  order: ${it.order};`);
+    if (rules.length) {
+      css += `\n.item:nth-child(${i + 1}) {\n` + rules.join("\n") + "\n}\n";
+    }
+  });
+
+  $("css-out").textContent = css;
+}
+
+// Wire container controls.
+["c-direction","c-wrap","c-justify","c-align-items","c-align-content","c-gap"].forEach((id) => {
+  $(id).addEventListener("input", render);
+  $(id).addEventListener("change", render);
+});
+
+// Wire per-item controls.
+$("i-grow").addEventListener("input", () => { if (selected >= 0) { items[selected].grow = parseInt($("i-grow").value, 10) || 0; render(); } });
+$("i-shrink").addEventListener("input", () => { if (selected >= 0) { items[selected].shrink = parseInt($("i-shrink").value, 10) || 0; render(); } });
+$("i-basis").addEventListener("input", () => { if (selected >= 0) { items[selected].basis = $("i-basis").value.trim() || "auto"; render(); } });
+$("i-alignself").addEventListener("change", () => { if (selected >= 0) { items[selected].alignSelf = $("i-alignself").value; render(); } });
+$("i-order").addEventListener("input", () => { if (selected >= 0) { items[selected].order = parseInt($("i-order").value, 10) || 0; render(); } });
+
+$("add-item").addEventListener("click", () => {
+  if (items.length >= 12) return;
+  items.push(defItem());
+  render();
+});
+$("remove-item").addEventListener("click", () => {
+  if (items.length <= 1) return;
+  items.pop();
+  if (selected >= items.length) {
+    selected = -1;
+    $("per-item").style.display = "none";
+  }
+  render();
+});
+
+$("copy-btn").addEventListener("click", async () => {
+  const text = $("css-out").textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    $("copy-btn").textContent = "Copied";
+    setTimeout(() => ($("copy-btn").textContent = "Copy"), 1200);
+  } catch (e) {
+    const r = document.createRange();
+    r.selectNodeContents($("css-out"));
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(r);
+  }
+});
+
+setTheme("light");
+render();
+</script>
+</body>
+</html>
